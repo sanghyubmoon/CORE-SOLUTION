@@ -1,6 +1,6 @@
+// Demo version that works without backend
+import React from 'react'
 import { useState } from 'react'
-import { useQuery, useMutation } from '@tanstack/react-query'
-import axios from 'axios'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Select } from '@/components/ui/Select'
@@ -15,48 +15,42 @@ interface ContentIdea {
   engagementPotential: number
 }
 
+// Demo data
+const mockIdeas: ContentIdea[] = [
+  {
+    title: "30초 만에 배우는 요리 팁",
+    hook: "집에서 쉽게 따라할 수 있는 요리 꿀팁!",
+    mainPoints: ["재료 준비", "조리 과정", "플레이팅"],
+    callToAction: "더 많은 요리 팁을 보려면 팔로우하세요!",
+    engagementPotential: 8
+  },
+  {
+    title: "초보자를 위한 운동 루틴",
+    hook: "운동 처음이라면 이것부터 시작하세요",
+    mainPoints: ["워밍업", "기본 운동", "쿨다운"],
+    callToAction: "매일 운동하는 습관을 만들어보세요!",
+    engagementPotential: 9
+  }
+]
+
+const mockTrends = ["#요리", "#홈트레이닝", "#일상브이로그", "#뷰티팁", "#테크리뷰"]
+const mockKeywords = ["쉬운요리", "다이어트", "운동", "메이크업", "리뷰"]
+
 export function ContentGenerator() {
   const [topic, setTopic] = useState('')
   const [platform, setPlatform] = useState('tiktok')
   const [targetAudience, setTargetAudience] = useState('')
   const [tone, setTone] = useState('funny')
-  const [contentId, setContentId] = useState<string | null>(null)
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [showResults, setShowResults] = useState(false)
 
-  const generateIdeas = useMutation({
-    mutationFn: async () => {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/content/ideas`, {
-        topic,
-        platform,
-        targetAudience,
-        tone
-      })
-      return response.data
-    },
-    onSuccess: (data) => {
-      setContentId(data.data.contentId)
-    }
-  })
-
-  const trendsQuery = useQuery({
-    queryKey: ['trends', platform],
-    queryFn: async () => {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/content/trending`, {
-        platform
-      })
-      return response.data
-    },
-    enabled: false
-  })
-
-  const keywordsQuery = useQuery({
-    queryKey: ['keywords', platform],
-    queryFn: async () => {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/content/keywords`, {
-        params: { platform }
-      })
-      return response.data
-    }
-  })
+  const handleGenerateIdeas = () => {
+    setIsGenerating(true)
+    setTimeout(() => {
+      setIsGenerating(false)
+      setShowResults(true)
+    }, 1500)
+  }
 
   return (
     <div className="space-y-6">
@@ -103,20 +97,20 @@ export function ContentGenerator() {
           </div>
 
           <Button
-            onClick={() => generateIdeas.mutate()}
-            disabled={!topic || generateIdeas.isPending}
+            onClick={handleGenerateIdeas}
+            disabled={!topic || isGenerating}
             className="w-full"
           >
             <Sparkles className="mr-2" size={16} />
-            {generateIdeas.isPending ? 'Generating...' : 'Generate Ideas'}
+            {isGenerating ? 'Generating...' : 'Generate Ideas'}
           </Button>
         </div>
       </Card>
 
-      {generateIdeas.data && (
+      {showResults && (
         <div className="space-y-4">
           <h3 className="text-xl font-semibold">Generated Ideas</h3>
-          {generateIdeas.data.data.ideas.map((idea: ContentIdea, index: number) => (
+          {mockIdeas.map((idea, index) => (
             <Card key={index}>
               <div className="space-y-3">
                 <div className="flex justify-between items-start">
@@ -148,21 +142,19 @@ export function ContentGenerator() {
             <Button
               size="sm"
               variant="outline"
-              onClick={() => trendsQuery.refetch()}
+              onClick={() => {}}
             >
               <TrendingUp className="mr-2" size={16} />
               Check Trends
             </Button>
           </div>
-          {trendsQuery.data && (
-            <div className="space-y-2">
-              {trendsQuery.data.data.trends.map((trend: string, index: number) => (
-                <div key={index} className="p-2 bg-gray-50 rounded">
-                  #{index + 1} {trend}
-                </div>
-              ))}
-            </div>
-          )}
+          <div className="space-y-2">
+            {mockTrends.map((trend, index) => (
+              <div key={index} className="p-2 bg-gray-50 rounded">
+                #{index + 1} {trend}
+              </div>
+            ))}
+          </div>
         </Card>
 
         <Card>
@@ -170,18 +162,16 @@ export function ContentGenerator() {
             <h3 className="text-lg font-semibold">Recommended Keywords</h3>
             <Hash size={20} className="text-gray-500" />
           </div>
-          {keywordsQuery.data && (
-            <div className="flex flex-wrap gap-2">
-              {keywordsQuery.data.data.keywords.map((keyword: string, index: number) => (
-                <span
-                  key={index}
-                  className="px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm"
-                >
-                  #{keyword}
-                </span>
-              ))}
-            </div>
-          )}
+          <div className="flex flex-wrap gap-2">
+            {mockKeywords.map((keyword, index) => (
+              <span
+                key={index}
+                className="px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm"
+              >
+                #{keyword}
+              </span>
+            ))}
+          </div>
         </Card>
       </div>
     </div>

@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "build": "npx next build",
+    "start": "npx next start",
     "lint": "next lint",
-    "export": "next export",
-    "railway-start": "npx serve@latest out -p $PORT"
+    "export": "npx next export",
+    "railway-start": "npx serve@latest out -p $PORT",
+    "railway-build": "npx next build && npx next export"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.5",

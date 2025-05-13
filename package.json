@@ -1,0 +1,25 @@
+{
+  "name": "core-solution",
+  "version": "1.0.0",
+  "description": "AI-powered short-form content creation and influencer recommendation core solution",
+  "scripts": {
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
+    "backend": "cd backend && npm run dev",
+    "frontend": "cd frontend && npm run dev",
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "build": "cd frontend && npm run build",
+    "start": "cd backend && npm start"
+  },
+  "keywords": [
+    "ai",
+    "content-creation",
+    "influencer",
+    "openai",
+    "short-form"
+  ],
+  "author": "sanghyubmoon",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

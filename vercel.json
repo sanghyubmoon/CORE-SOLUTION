@@ -1,0 +1,10 @@
+{
+  "buildCommand": "cd frontend && npm install && npm run build",
+  "outputDirectory": "frontend/.next",
+  "framework": "nextjs",
+  "installCommand": "npm install",
+  "env": {
+    "NEXT_PUBLIC_API_URL": "https://jsonplaceholder.typicode.com",
+    "NEXT_PUBLIC_OPENAI_API_KEY": "demo_key"
+  }
+}
